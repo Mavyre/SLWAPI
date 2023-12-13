@@ -1,0 +1,219 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Weather API for Stacklabs",
+    "description": "The Weather Data API is a test project developed for Stacklabs to provide developers with access to accurate and up-to-date weather information. This API offers both current weather conditions and future weather forecasts for a specified location.\n## Features\n- **Current Weather**: Retrieve real-time data, including a french textual weather description, temperature, humidity, and wind speed.\n- **Weather Forecast**: Retrieve weather tendancy forecast for a specific location.\n## Authentication\nAuthentication is not yet implemented, as it is an internal tetst project. APIKey will be implemented later\n## Responses\nThe API returns responses in JSON format. Successful responses will have a status code of 200, while error responses will include appropriate status codes and details.\n## Examples\nSample requests and responses are provided below to assist developers in integrating the Weather Data API into their applications.",
+    "contact": {
+      "email": "bastien.vide@gmail.com"
+    },
+    "version": "0.1"
+  },
+  "externalDocs": {
+    "description": "Find out more about Stacklabs",
+    "url": "https://stack-labs.com/en/"
+  },
+  "tags": [
+    {
+      "name": "weather",
+      "description": "Weather informations"
+    }
+  ],
+  "paths": {
+    "/weather/current": {
+      "summary": "Current weather operations",
+      "get": {
+        "summary": "Gets the current weather for a specified location",
+        "description": "Returns textual descriptions, temperature, relative humidity and wind speed for a specified location",
+        "operationId": "",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "location",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "City name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current weather response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Textual weather description."
+                    },
+                    "temperature": {
+                      "type": "integer",
+                      "description": "Temperature in Celsius degrees."
+                    },
+                    "wind": {
+                      "type": "integer",
+                      "description": "Wind speed in km/h."
+                    },
+                    "humidity": {
+                      "type": "integer",
+                      "description": "Relative humidity (%)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Location not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Location not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Weather provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "weather"
+        ]
+      }
+    },
+    "/weather/forecast": {
+      "summary": "Weather forecast operation",
+      "get": {
+        "summary": "Gets weather forecast tendency over the 7 next days",
+        "description": "Returns the weather tendency of a specific location for the next 7 days, for different indicators: global tendency, teperature tendency, pressure tendency, wind average.",
+        "operationId": "",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "location",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "City name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Forecast weather response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tendency": {
+                      "type": "string",
+                      "description": "Global tendency.",
+                      "enum": [
+                        "up",
+                        "stable",
+                        "down"
+                      ]
+                    },
+                    "temperature": {
+                      "type": "string",
+                      "description": "Temperature tendency.",
+                      "enum": [
+                        "up",
+                        "stable",
+                        "down"
+                      ]
+                    },
+                    "pressure": {
+                      "type": "string",
+                      "description": "Pressure tendency.",
+                      "enum": [
+                        "up",
+                        "stable",
+                        "down"
+                      ]
+                    },
+                    "wind_avg": {
+                      "type": "integer",
+                      "description": "Wind average."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Location not provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Location not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Weather provider error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "weather"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code (HTTP error code)."
+          },
+          "error": {
+            "type": "object",
+            "items": {}
+          }
+        }
+      }
+    }
+  }
+}

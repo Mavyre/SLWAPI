@@ -10,6 +10,7 @@ router.get('/', (req, res) => res.status(404).send());
 
 router.get('/current', (req, res) => {
   const location = req.query.location;
+  if(!location) return res.status(400).json({status: 400, error: "No location specified"})
 
   axios.get(baseUrl+'/current',{
     params: {
