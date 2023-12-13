@@ -130,9 +130,9 @@
                       "type": "string",
                       "description": "Global tendency.",
                       "enum": [
-                        "up",
+                        "better",
                         "stable",
-                        "down"
+                        "worse"
                       ]
                     },
                     "temperature": {
