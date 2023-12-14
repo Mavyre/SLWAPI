@@ -86,13 +86,32 @@ The Weather Data API is a demo project developed to provide developers with acce
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these simple steps.
 
-### Prerequisites
+### Using Docker Compose
+
+```sh 
+docker-compose up
+```
+
+### Manually build Docker image
+
+1. Build the Docker image
+   ```sh
+   docker build . -t demo-weather-sl:latest
+   ```
+2. Start the image
+   ```sh
+   docker run --name=demo-weather-sl0 --env=WEATHERBITAPIKEY=apikey -p 3000:3000 demo-weather-sl:latest
+   ```
+
+### Manually
+
+#### Prerequisites
 
 You must install Node.JS and NPM. Checkout [https://nodejs.org/](https://nodejs.org/)
 
-### Installation
+#### Installation
 
 1. Get a free API Key at [https://www.weatherbit.io/](https://www.weatherbit.io/)
 2. Clone the repo
@@ -103,6 +122,13 @@ You must install Node.JS and NPM. Checkout [https://nodejs.org/](https://nodejs.
    ```sh
    npm install
    ```
+   
+#### Run
+
+4. Startup the Node server
+   ```sh
+   WEATHERBITAPIKEY=yourkey npm start
+   ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -111,17 +137,11 @@ You must install Node.JS and NPM. Checkout [https://nodejs.org/](https://nodejs.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Start up the server using the following command:
-```sh
-WEATHERBITAPIKEY=yourkey npm start
-```
-
 By default, the server runs on port 3000. This is configurable using the `PORT` environment variable
 
 Once started up, you can use the `/weather` API endpoints.
 
 For more information, head over to the Swagger interface ([http://127.0.0.1:3000/api-docs](http://127.0.0.1:3000/api-docs)) to know more about the different usable API endpoints.
-
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -132,8 +152,10 @@ For more information, head over to the Swagger interface ([http://127.0.0.1:3000
 ## Roadmap
 
 - [X] Add caching
+  - [ ] Add caching through Redis
 - [ ] Add unit testing on different helper functions (Using Mocha)
-- [ ] Add a Dockerfile
+- [X] Add a Dockerfile
+- [X] Add Docker compose
 - [ ] Make a Lambda-ready version
 
 See the [open issues](https://github.com/Mavyre/SLWAPI/issues) for a full list of proposed features (and known issues).

@@ -1,0 +1,9 @@
+name: demo-weather-sl
+services:
+  demo-weather-sl:
+    build: .
+    container_name: demo-weather-sl0
+    environment:
+      - WEATHERBITAPIKEY=apikey
+    ports:
+      - 3000:3000
