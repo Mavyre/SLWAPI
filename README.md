@@ -131,6 +131,7 @@ For more information, head over to the Swagger interface ([http://127.0.0.1:3000
 <!-- ROADMAP -->
 ## Roadmap
 
+- [X] Add caching
 - [ ] Add unit testing on different helper functions (Using Mocha)
 - [ ] Add a Dockerfile
 - [ ] Make a Lambda-ready version

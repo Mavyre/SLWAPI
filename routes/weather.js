@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const axios = require('axios');
+const { setupCache } = require('axios-cache-interceptor');
+const axios = setupCache(require('axios'));
 const tendencies = require("../helpers/tendencies");
 
 const wbKey = process.env.WEATHERBITAPIKEY;
@@ -24,6 +25,10 @@ router.get('/current', (req, res) => {
       key: wbKey,
       lang: "fr",
       city: location
+    },
+    cache: {
+      ttl: 1000 * 3600 * 2,
+      interpretHeader: false
     }
   }).then(result => {
     if(result.data.count) {
@@ -73,6 +78,10 @@ router.get('/forecast', (req, res) => {
       lang: "fr",
       city: location,
       days: 7
+    },
+    cache: {
+      ttl: 1000 * 3600 * 2,
+      interpretHeader: false
     }
   }).then(result => {
     const data = result.data.data;
