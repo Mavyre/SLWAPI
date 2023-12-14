@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const tendencies = require("../helpers/tendencies");
 
-const wbkey = process.env.WEATHERBITAPIKEY;
+const wbKey = process.env.WEATHERBITAPIKEY;
 const baseUrl = 'https://api.weatherbit.io/v2.0';
 
 /* GET users listing. */
@@ -15,7 +15,7 @@ router.get('/current', (req, res) => {
 
   axios.get(baseUrl+'/current',{
     params: {
-      key: wbkey,
+      key: wbKey,
       lang: "fr",
       city: location
     }
@@ -54,7 +54,7 @@ router.get('/forecast', (req, res) => {
 
   axios.get(baseUrl+'/forecast/daily',{
     params: {
-      key: wbkey,
+      key: wbKey,
       lang: "fr",
       city: location,
       days: 7
