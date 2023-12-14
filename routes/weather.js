@@ -80,9 +80,10 @@ router.get('/forecast', (req, res) => {
     const presTrend = tendencies.calculateTrend(pres, 1013.25);
     const rainTrend = tendencies.calculateTrend(data.map(v => v.precip), 0);
     const windTrend = tendencies.calculateTrend(windSpds, 0);
+    const globalTrend = Math.round([tempTrend, presTrend, rainTrend, windTrend].reduce((a, b) => a + b));
 
     res.json({
-      tendency: tendencies.describeTrend([tempTrend, presTrend, rainTrend, windTrend].reduce((a,b) => a + b)),
+      tendency: tendencies.describeTrend(globalTrend),
       temperature: tendencies.describeReg(tempReg),
       pressure: tendencies.describeReg(presReg, 2),
       wind_beaufort: bfrtWindSpd
