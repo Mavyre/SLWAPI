@@ -26,5 +26,6 @@ module.exports = {
         else if(trend < 0)
             return "worse";
         else return "stable";
-    }
+    },
+    convertToBeaufort: wind => Math.min(Math.floor(Math.pow(wind/0.836, 2/3)),12)
 }

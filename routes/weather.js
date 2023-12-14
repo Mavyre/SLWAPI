@@ -23,12 +23,14 @@ router.get('/current', (req, res) => {
     if(result.data.count) {
       const data = result.data.data[0];
 
+      const frDateTime = new Intl.DateTimeFormat('fr-FR', {
+        dateStyle: 'full',
+        timeStyle: 'long',
+      }).format(new Date(data.ob_time));
+
       res.json({
         text: (`Bulletin météo pour ${location} (${data.country_code}). `
-              + `Dernière observation le ${new Intl.DateTimeFormat('fr-FR', {
-                                            dateStyle: 'full',
-                                            timeStyle: 'long',
-                                          }).format(new Date(data.ob_time))}. `
+              + `Dernière observation le ${frDateTime}. `
               + `Météo actuellement observée : ${data.weather.description}. `
               + `Il fait ${data.temp}°C` + (data.app_temp === data.temp ? '. ' : `, ressenti ${data.app_temp}°C. `)
               + `Le vent est actuellement de ${data.wind_spd * 3.6}km/h, direction ${data.wind_cdir_full}. `
@@ -66,7 +68,7 @@ router.get('/forecast', (req, res) => {
     const windSpds = data.map(v => v.wind_spd);
     const avgWindSpds = windSpds.reduce((a,b) => a + b) / windSpds.length;
     // Beaufort scale calculation B=(v/0.836)^(2/3)
-    const bfrtWindSpd = Math.min(Math.floor(Math.pow(avgWindSpds/0.836, 2/3)),12);
+    const bfrtWindSpd = tendencies.convertToBeaufort(avgWindSpds);
 
     // Temperature and pressure tendencies calculataion
     const temps = data.map(v => v.temp);
