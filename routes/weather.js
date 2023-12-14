@@ -6,9 +6,15 @@ const tendencies = require("../helpers/tendencies");
 const wbKey = process.env.WEATHERBITAPIKEY;
 const baseUrl = 'https://api.weatherbit.io/v2.0';
 
-/* GET users listing. */
 router.get('/', (req, res) => res.status(404).send());
 
+/**
+ * Gets the current weather for a specified location
+ * Returns textual descriptions, temperature, relative humidity and wind speed for a specified location
+ *
+ * location String City name
+ * returns inline_response_200
+ **/
 router.get('/current', (req, res) => {
   const location = req.query.location;
   if(!location) return res.status(400).json({status: 400, error: "No location specified"})
@@ -50,6 +56,13 @@ router.get('/current', (req, res) => {
   });
 });
 
+/**
+ * Gets weather forecast tendency over the 7 next days
+ * Returns the weather tendency of a specific location for the next 7 days, for different indicators: global tendency, teperature tendency, pressure tendency, wind average.
+ *
+ * location String City name
+ * returns inline_response_200_1
+ **/
 router.get('/forecast', (req, res) => {
   const location = req.query.location;
   if(!location) return res.status(400).json({status: 400, error: "No location specified"})
