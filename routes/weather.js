@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const tendencies = require("../helpers/tendencies");
 
-const wbkey = process.env.WEATHERBITAPIKEY;
+const wbKey = process.env.WEATHERBITAPIKEY;
 const baseUrl = 'https://api.weatherbit.io/v2.0';
 
 /* GET users listing. */
@@ -14,7 +15,7 @@ router.get('/current', (req, res) => {
 
   axios.get(baseUrl+'/current',{
     params: {
-      key: wbkey,
+      key: wbKey,
       lang: "fr",
       city: location
     }
@@ -22,12 +23,14 @@ router.get('/current', (req, res) => {
     if(result.data.count) {
       const data = result.data.data[0];
 
+      const frDateTime = new Intl.DateTimeFormat('fr-FR', {
+        dateStyle: 'full',
+        timeStyle: 'long',
+      }).format(new Date(data.ob_time));
+
       res.json({
         text: (`Bulletin météo pour ${location} (${data.country_code}). `
-              + `Dernière observation le ${new Intl.DateTimeFormat('fr-FR', {
-                                            dateStyle: 'full',
-                                            timeStyle: 'long',
-                                          }).format(new Date(data.ob_time))}. `
+              + `Dernière observation le ${frDateTime}. `
               + `Météo actuellement observée : ${data.weather.description}. `
               + `Il fait ${data.temp}°C` + (data.app_temp === data.temp ? '. ' : `, ressenti ${data.app_temp}°C. `)
               + `Le vent est actuellement de ${data.wind_spd * 3.6}km/h, direction ${data.wind_cdir_full}. `
@@ -49,6 +52,50 @@ router.get('/current', (req, res) => {
 
 router.get('/forecast', (req, res) => {
   const location = req.query.location;
+  if(!location) return res.status(400).json({status: 400, error: "No location specified"})
+
+  axios.get(baseUrl+'/forecast/daily',{
+    params: {
+      key: wbKey,
+      lang: "fr",
+      city: location,
+      days: 7
+    }
+  }).then(result => {
+    const data = result.data.data;
+
+    // Wind calculation
+    const windSpds = data.map(v => v.wind_spd);
+    const avgWindSpds = windSpds.reduce((a,b) => a + b) / windSpds.length;
+    // Beaufort scale calculation B=(v/0.836)^(2/3)
+    const bfrtWindSpd = tendencies.convertToBeaufort(avgWindSpds);
+
+    // Temperature and pressure tendencies calculataion
+    const temps = data.map(v => v.temp);
+    const pres = data.map(v => v.pres);
+
+    const tempReg = tendencies.calculateReg(temps);
+    const presReg = tendencies.calculateReg(pres);
+
+    // Global trend calculation
+    const tempTrend = tendencies.calculateTrend(temps, 20);
+    const presTrend = tendencies.calculateTrend(pres, 1013.25);
+    const rainTrend = tendencies.calculateTrend(data.map(v => v.precip), 0);
+    const windTrend = tendencies.calculateTrend(windSpds, 0);
+    const globalTrend = Math.round([tempTrend, presTrend, rainTrend, windTrend].reduce((a, b) => a + b));
+
+    res.json({
+      tendency: tendencies.describeTrend(globalTrend),
+      temperature: tendencies.describeReg(tempReg),
+      pressure: tendencies.describeReg(presReg, 2),
+      wind_beaufort: bfrtWindSpd
+    });
+  }).catch(err => {
+    res.status(500).json({
+      status: 500,
+      error: err
+    });
+  });
 });
 
 module.exports = router;
