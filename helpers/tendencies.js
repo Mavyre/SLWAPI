@@ -7,15 +7,17 @@ module.exports = {
     calculateTrend: (data, target) => -regression.linear(data.map((v,i) => [i, Math.abs(v - target)])).equation[0],
     // Describe textually a regression
     describeReg: (reg, threshold) => {
+        const roundedReg = Math.round(reg);
+
         if (threshold !== undefined) {
-            if(reg >= threshold)
+            if(roundedReg >= threshold)
                 return "strong up";
-            else if(reg <= -threshold)
+            else if(roundedReg <= -threshold)
                 return "strong down";
         }
-        if(reg > 0)
+        if(roundedReg > 0)
             return "up";
-        else if(reg < 0)
+        else if(roundedReg < 0)
             return "down";
         else return "stable";
     },
